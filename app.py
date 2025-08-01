@@ -133,6 +133,10 @@ st.subheader(f"📊 Cumulative EV Forecast for {county} County")
 fig, ax = plt.subplots(figsize=(12, 6))
 for label, data in combined.groupby('Source'):
     ax.plot(data['Date'], data['Cumulative EV'], label=label, marker='o')
+
+#Add vertical line at forecast start
+ax.axvline(x=latest_date, color='gray', linestyle='--', alpha=0.7, label='Forecast Start')
+
 ax.set_title(f"Cumulative EV Trend - {county} (3 Years Forecast)", fontsize=14, color='white')
 ax.set_xlabel("Date", color='white')
 ax.set_ylabel("Cumulative EV Count", color='white')
@@ -254,6 +258,22 @@ if multi_counties:
     # Join all in one sentence and show with st.success
     growth_sentence = " | ".join(growth_summaries)
     st.success(f"Forecasted EV adoption growth over next 3 years — {growth_sentence}")
+
+
+# Identify the county with the highest forecasted EV growth
+growth_values = []
+for cty in multi_counties:
+    cty_df = comp_df[comp_df['County'] == cty].reset_index(drop=True)
+    historical_total = cty_df['Cumulative EV'].iloc[len(cty_df) - forecast_horizon - 1]
+    forecasted_total = cty_df['Cumulative EV'].iloc[-1]
+
+    if historical_total > 0:
+        growth_pct = ((forecasted_total - historical_total) / historical_total) * 100
+        growth_values.append((cty, growth_pct))
+
+if growth_values:
+    top_county, top_growth = max(growth_values, key=lambda x: x[1])
+    st.info(f"🚀 **{top_county}** is expected to have the **highest EV adoption growth** among the selected counties with a projected increase of **{top_growth:.2f}%** over the next 3 years.")
 
 st.success("Forecast complete")
 
