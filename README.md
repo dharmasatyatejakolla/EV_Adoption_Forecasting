@@ -36,7 +36,7 @@ The dataset contains monthly EV adoption data per county in Washington, with add
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/dharmasatyatejakolla/ev_adoption_prediction.git
+    git clone https://github.com/dharmasatyatejakolla/EV_Adoption_Prediction.git
     cd ev-forecast-dashboard
     ```
 
